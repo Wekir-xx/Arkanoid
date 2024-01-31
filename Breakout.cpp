@@ -2,6 +2,7 @@
 #include <qpainter.h>
 #include <QKeyEvent>
 #include <QPainterPath>
+#include <thread>
 
 Breakout::Breakout(QWidget* parent)
     : QWidget{parent}, paddle{}, bricks{}, ball{}, timerID{}
@@ -108,7 +109,6 @@ void Breakout::checkBallTouch()
         ydir = 1;
     if (ball->getCords().y() + ball->getImage().width() > this->height())
     {
-        killTimer(timerID);
         game_over = true;
         return;
     }
@@ -213,6 +213,9 @@ void Breakout::paintEvent(QPaintEvent* event)
     }
     else if (bricks.size() > 0)
     {
+        if(timerID!=0)
+            killTimer(timerID);
+        timerID=0;
         QString text("Game Over");
         QString s_score("your score: %1");
         s_score = s_score.arg(score);
@@ -229,17 +232,17 @@ void Breakout::paintEvent(QPaintEvent* event)
     else
     {
         QString text("You win!");
-        QString score("your score: %1");
-        score = score.arg(score);
+        QString s_score("your score: %1");
+        s_score = s_score.arg(score);
         QFont text_font("Times New Roman", 35);
         QFont score_font("Times New Roman", 14);
         QFontMetrics text_metrics(text_font);
         QFontMetrics score_metrics(score_font);
         qreal text_width = text_metrics.horizontalAdvance(text);
-        qreal score_width = score_metrics.horizontalAdvance(score);
+        qreal score_width = score_metrics.horizontalAdvance(s_score);
         qreal score_height = score_metrics.height();
         paintText(painter, this->width() / 2 - text_width / 2, this->height() / 2, text, text_font, QColor("black"), QColor("red"));
-        paintText(painter, this->width() / 2 - score_width / 2, this->height() / 2 + score_height, score, score_font, QColor("red"), QColor("red"));
+        paintText(painter, this->width() / 2 - score_width / 2, this->height() / 2 + score_height, s_score, score_font, QColor("red"), QColor("red"));
     }
     if (paused)
     {
@@ -257,8 +260,9 @@ void Breakout::timerEvent(QTimerEvent* event)
 {
     Q_UNUSED(event);
     ballMove();
-    checkBallTouch();
+    std::thread th(&Breakout::checkBallTouch, this);
     this->repaint();
+    th.join();
 }
 
 void Breakout::keyPressEvent(QKeyEvent* event)
@@ -294,6 +298,8 @@ void Breakout::keyPressEvent(QKeyEvent* event)
             startGame();
     }
     else if (key == Qt::Key_N)
+    {
         newGame();
+    }
     this->repaint();
 }

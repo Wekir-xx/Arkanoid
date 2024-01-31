@@ -1,6 +1,7 @@
 #pragma once
 #include <qwidget.h>
 #include "Item.h"
+#include <QTimer>
 
 class Breakout :
                  public QWidget
