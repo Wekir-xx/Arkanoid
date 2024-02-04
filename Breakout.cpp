@@ -7,6 +7,8 @@
 Breakout::Breakout(QWidget* parent)
     : QWidget{parent}, paddle{}, bricks{}, ball{}, timerID{}
 {
+    this->setWindowTitle("Arkonoid");
+    this->setWindowIcon(QIcon(":/images/icon.jpg"));
     this->setFixedSize(WIDTH, HEIGHT);
     QBrush brush;
     brush.setTextureImage (QImage(":/images/back.png"));
