@@ -180,7 +180,6 @@ void Breakout::paintGameField(QPainter* painter)
 void Breakout::paintText(QPainter* painter, qreal x, qreal y, QString text, QFont font, QColor pen, QColor brush)
 {
     QFontMetrics metrics(font);
-    qreal text_width = metrics.horizontalAdvance(text);
     QPainterPath path;
     path.addText(x, y, font, text);
     painter->setPen(QPen(pen));
@@ -201,7 +200,6 @@ void Breakout::paintEvent(QPaintEvent* event)
         QFont font("Times New Roman", 14);
         QFontMetrics metrics(font);
         qreal text_width = metrics.horizontalAdvance(text);
-        qreal text_height = metrics.height();
         paintText(painter, this->width() / 2 - text_width / 2, PADDLE_Y_FROM_BOTTOM_BORDER / 2, text, font, QColor("red"), QColor("red"));
         if (new_game)
         {
